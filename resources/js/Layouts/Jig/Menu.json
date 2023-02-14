@@ -36,5 +36,41 @@
         "isTitle": false,
         "isParent": false,
         "children": []
+    },
+    "chronic-diseases": {
+        "route": "admin.chronic-diseases.index",
+        "title": "Chronic Diseases",
+        "routePattern": "admin.chronic-diseases.*",
+        "faIcon": "far fa-clone",
+        "isTitle": false,
+        "isParent": false,
+        "children": []
+    },
+    "family-histories": {
+        "route": "admin.family-histories.index",
+        "title": "Family Histories",
+        "routePattern": "admin.family-histories.*",
+        "faIcon": "far fa-clone",
+        "isTitle": false,
+        "isParent": false,
+        "children": []
+    },
+    "patients": {
+        "route": "admin.patients.index",
+        "title": "Patients",
+        "routePattern": "admin.patients.*",
+        "faIcon": "far fa-clone",
+        "isTitle": false,
+        "isParent": false,
+        "children": []
+    },
+    "allergies": {
+        "route": "admin.allergies.index",
+        "title": "Allergies",
+        "routePattern": "admin.allergies.*",
+        "faIcon": "far fa-clone",
+        "isTitle": false,
+        "isParent": false,
+        "children": []
     }
 }

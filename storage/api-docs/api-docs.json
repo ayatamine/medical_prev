@@ -1,0 +1,312 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "My API",
+        "license": {
+            "name": "MIT"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/patients/otp/send": {
+            "post": {
+                "tags": [
+                    "patients"
+                ],
+                "summary": "send patient otp to phone number",
+                "description": "send patient otp via to phone number via sms example +213684759496",
+                "operationId": "sendOtp",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "properties": {
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": "+213664419425"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The otp sended successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/patients/otp/verify": {
+            "post": {
+                "tags": [
+                    "patients"
+                ],
+                "summary": "verify patient otp code if match to login",
+                "description": "verify patient otp code if match to login using the phone_number and the otp",
+                "operationId": "loginWithOtp",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "properties": {
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": "+213664419425"
+                                    },
+                                    "otp": {
+                                        "type": "string",
+                                        "example": "55555"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The verification passed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Your OTP Or Phone Number is not correct",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "419": {
+                        "description": "Your OTP has been expired",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/patients/complete-medical-record": {
+            "post": {
+                "tags": [
+                    "patients"
+                ],
+                "summary": "update or complete patient medical record",
+                "description": "update or complete patient medical record ",
+                "operationId": "storePatientData",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "properties": {
+                                    "full_name": {
+                                        "type": "string",
+                                        "example": "ahmed amine"
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "example": "25-05-1995"
+                                    },
+                                    "age": {
+                                        "type": "integer",
+                                        "example": 28
+                                    },
+                                    "gender": {
+                                        "type": "integer",
+                                        "example": "male"
+                                    },
+                                    "address": {
+                                        "type": "integer",
+                                        "example": "adrar alg"
+                                    },
+                                    "height": {
+                                        "type": "integer",
+                                        "example": 180
+                                    },
+                                    "weight": {
+                                        "type": "number",
+                                        "format": "double",
+                                        "example": "55.5"
+                                    },
+                                    "allergy_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "chronic_diseases_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "family_history_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "has_cancer_screening": {
+                                        "type": "boolean",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ]
+                                    },
+                                    "has_depression_screening": {
+                                        "type": "boolean",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ]
+                                    },
+                                    "other_problems": {
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Patient Record Completed Successfuly",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found with the given token or phone number, please login again",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/chronic-diseases": {
+            "get": {
+                "tags": [
+                    "chronicDiseases"
+                ],
+                "description": "Get list of chronic diseases",
+                "operationId": "getChronicDiseases",
+                "responses": {
+                    "200": {
+                        "description": "data fetched successfuly",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/patients/store": {
+            "post": {
+                "tags": [
+                    "patients"
+                ],
+                "summary": "Store new patient",
+                "description": "register new patient",
+                "operationId": "storepatient",
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/v1/family-histories": {
+            "get": {
+                "tags": [
+                    "familyHistories"
+                ],
+                "description": "Get list of family histories",
+                "operationId": "getfamilyHistories",
+                "responses": {
+                    "200": {
+                        "description": "data fetched successfuly",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}

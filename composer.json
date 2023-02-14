@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "darkaonline/l5-swagger": "^8.1",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "inertiajs/inertia-laravel": "^v0.5.4",
@@ -14,6 +15,7 @@
         "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.5",
         "savannabits/jetstream-inertia-generator": "^3.2",
+        "savannabits/laravel-pagetables": "^1.1",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
@@ -29,7 +31,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/authentication.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

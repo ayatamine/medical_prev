@@ -46,6 +46,7 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
+            $this->mapMobileApiRoutes();
         });
     }
 
@@ -59,5 +60,19 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
         });
+    }
+     /**
+     * Define the "mobile api" routes for the application.
+     *
+     * These routes are typically stateless.
+     *
+     * @return void
+     */
+    protected function mapMobileApiRoutes()
+    {
+        Route::prefix('api/v1')
+        ->middleware('api')
+        ->namespace($this->namespace)
+        ->group(base_path('routes/mobile/api_v1.php'));
     }
 }

@@ -40,3 +40,38 @@ Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], functi
     Route::get('/roles/dt', [\App\Http\Controllers\API\RoleController::class,'dt'])->name('roles.dt');
     Route::apiResource('/roles', \App\Http\Controllers\API\RoleController::class)->parameters(["roles" => "role"]);
 });
+
+
+/* Auto-generated chronic-diseases api routes */
+Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], function () {
+    Route::get('/chronic-diseases/dt', [\App\Http\Controllers\API\ChronicDiseaseController::class,'dt'])->name('chronic-diseases.dt');
+    Route::apiResource('/chronic-diseases', \App\Http\Controllers\API\ChronicDiseaseController::class)->parameters(["chronic-diseases" => "chronicDisease"]);
+});
+
+
+/* Auto-generated family-histories api routes */
+Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], function () {
+    Route::get('/family-histories/dt', [\App\Http\Controllers\API\FamilyHistoryController::class,'dt'])->name('family-histories.dt');
+    Route::apiResource('/family-histories', \App\Http\Controllers\API\FamilyHistoryController::class)->parameters(["family-histories" => "familyHistory"]);
+});
+
+
+/* Auto-generated patients api routes */
+Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], function () {
+    Route::get('/patients/dt', [\App\Http\Controllers\API\PatientController::class,'dt'])->name('patients.dt');
+    Route::apiResource('/patients', \App\Http\Controllers\API\PatientController::class)->parameters(["patients" => "patient"]);
+});
+
+
+/* Auto-generated allergies api routes */
+Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], function () {
+    Route::get('/allergies/dt', [\App\Http\Controllers\API\AllergyController::class,'dt'])->name('allergies.dt');
+    Route::apiResource('/allergies', \App\Http\Controllers\API\AllergyController::class)->parameters(["allergies" => "allergy"]);
+});
+
+
+/* Auto-generated patients api routes */
+Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], function () {
+    Route::get('/patients/dt', [\App\Http\Controllers\API\PatientController::class,'dt'])->name('patients.dt');
+    Route::apiResource('/patients', \App\Http\Controllers\API\PatientController::class)->parameters(["patients" => "patient"]);
+});
