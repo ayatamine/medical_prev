@@ -46,7 +46,7 @@ if(!function_exists('send_sms')){
             return response()->json([
                 'message'=>'The OTP send Successfuly',
                 'status'=>true
-            ],500);
+            ],200);
     
         } catch (Exception $e) {
             return response()->json([

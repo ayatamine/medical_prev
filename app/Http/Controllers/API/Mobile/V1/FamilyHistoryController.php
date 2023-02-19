@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
         /**
       * @OA\Get(
       *      path="/api/v1/family-histories",
-      *      operationId="getfamilyHistories",
+      *      operationId="index",
       *      tags={"familyHistories"},
       *      description="Get list of family histories",
       *      @OA\Response(
@@ -27,7 +27,7 @@ use Illuminate\Http\Request;
      public function index()
      {
          $famiily_histories = FamilyHistory::select('name')->latest()->get()->makeHidden(["api_route", "can"])->toArray();
-         $message = count($famiily_histories) ? 'data fetched successfuly' : 'no family history recodrd founded';
+         $message = count($famiily_histories) ? 'data fetched successfuly' : 'no family history record founded';
          return response()->json(
              [
              "message" => $message,

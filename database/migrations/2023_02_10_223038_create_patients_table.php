@@ -38,6 +38,7 @@ return new class extends Migration
             $table->boolean('has_depression_screening')->default(false);
             $table->mediumText('other_problems')->nullable();
             $table->boolean('account_status')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

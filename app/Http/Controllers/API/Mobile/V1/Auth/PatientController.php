@@ -5,11 +5,18 @@ namespace App\Http\Controllers\API\Mobile\V1\Auth;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Api\PatientRequest;
+use App\Models\PatientScale;
+use Savannabits\JetstreamInertiaGenerator\Helpers\ApiResponse;
 
 class PatientController extends Controller
 {
-
+    private ApiResponse $api;
+    public function __construct(ApiResponse $apiResponse)
+    {
+        $this->api = $apiResponse;
+    }
      /**
         * @OA\Post(
         * path="/api/v1/patients/otp/send",
@@ -22,25 +29,11 @@ class PatientController extends Controller
         *         @OA\MediaType(
         *            mediaType="application/x-www-form-urlencoded",
         *             @OA\Schema(
-        *                 @OA\Property(
-        *                     property="phone_number",
-        *                     type="string",
-        *                     example="+213664419425"
-        *                 ),
-        *                
-        *             )
-        *        ),
+        *                 @OA\Property(property="phone_number",type="string",example="+213664419425"),
+        *             )),
         *    ),
-        *      @OA\Response(
-        *          response=200,
-        *          description="The otp sended successfully",
-        *          @OA\JsonContent()
-        *       ),
-        *      @OA\Response(
-        *          response=500,
-        *          description="internal server error",
-        *          @OA\JsonContent()
-        *       )
+        *      @OA\Response(response=200,description="The otp sended successfully",@OA\JsonContent()),
+        *      @OA\Response( response=500,description="internal server error", @OA\JsonContent())
         *     )
         */
         public function sendOtp(Request $request)
@@ -65,40 +58,14 @@ class PatientController extends Controller
         *         @OA\MediaType(
         *            mediaType="application/x-www-form-urlencoded",
         *             @OA\Schema(
-        *                 @OA\Property(
-        *                     property="phone_number",
-        *                     type="string",
-        *                     example="+213664419425"
-        *                 ),
-        *                 @OA\Property(
-        *                     property="otp",
-        *                     type="string",
-        *                     example="55555"
-        *                 )
-        *                
-        *             )
-        *        ),
+        *                 @OA\Property(property="phone_number",type="string",example="+213664419425"),
+        *                 @OA\Property(property="otp",type="string",example="55555")
+        *             ) ),
         *    ),
-        *      @OA\Response(
-        *          response=200,
-        *          description="The verification passed successfully",
-        *          @OA\JsonContent()
-        *       ),
-        *      @OA\Response(
-        *          response=422,
-        *          description="Your OTP Or Phone Number is not correct",
-        *          @OA\JsonContent()
-        *       ),
-        *      @OA\Response(
-        *          response=419,
-        *          description="Your OTP has been expired",
-        *          @OA\JsonContent()
-        *       ),
-        *      @OA\Response(
-        *          response=500,
-        *          description="internal server error",
-        *          @OA\JsonContent()
-        *       )
+        *      @OA\Response( response=200,description="The verification passed successfully",@OA\JsonContent()),
+        *      @OA\Response( response=422,description="Your OTP Or Phone Number is not correct",@OA\JsonContent()),
+        *      @OA\Response( response=419,description="Your OTP has been expired",@OA\JsonContent()),
+        *      @OA\Response(response=500,description="internal server error",@OA\JsonContent())
         *     )
         */
         public function loginWithOtp(Request $request)
@@ -114,28 +81,28 @@ class PatientController extends Controller
     
             $now = now();
             if (!$patient) {
-                return response()->json([
-                    'status' =>false,
-                    'message'=>'Your OTP Or Phone Number is not correct'
-                ],422);
+                return $this->api->failed()->code(422)
+                        ->message('Your OTP Or Phone Number is not correct')
+                        ->send();
             }else if($patient && $now->isAfter($patient->otp_expire_at)){
-                return response()->json([
-                    'status' =>false,
-                    'message'=>'Your OTP has been expired'
-                ],419);
+                return $this->api->failed()->code(419)
+                            ->message('Your OTP has been expired')
+                            ->send();
             }
+            
+            
             //validate the otp
             $patient->otp_verification_code =  null;
             $patient->otp_expire_at =  now();
             $patient->save();
 
-            return response()->json([
-                'status'=>true,
-                'data' =>[
-                    'token' => $patient->createToken('mobile', ['role:patient','patient:update'])->plainTextToken,
-                    'patient_id'=>$patient->id
-                ] 
-            ],200);
+            return $this->api->success()
+                        ->message('Phone number updated successfully')
+                        ->payload([
+                            'token' => $patient->createToken('mobile', ['role:patient','patient:update'])->plainTextToken,
+                            'patient_id'=>$patient->id
+                        ])
+                        ->send();
 
         }
         /**
@@ -176,19 +143,234 @@ class PatientController extends Controller
         {
 
           $patient = auth('sanctum') ? auth('sanctum')->user() : Patient::where('phone_number',$request->query('phone_number'))->firstOrFail();
-          $patient->update($request->except('thumbnail','phone_number','other_problems'));
-          
-          //to set as mutator in patient model
-          if($request->other_problems){
-            $patient->update(['other_problems'=>json_encode($request->other_problems)]);
-          }
-          
-          return response()->json([
-            'status'=>true,
-            'message'=>'Patient Record Completed Successfuly',
-            'data' =>[
-                'patient'=>$patient->makeHidden(["api_route", "can","created_at","updated_at","otp_verification_code","otp_expire_at"])
-            ] 
-          ]);
+          $patient->update($request->except('thumbnail','phone_number'));
+
+          return $this->api->success()
+                        ->message('Patient Record Completed Successfuly')
+                        ->payload(['patient'=>$patient->makeHidden(["api_route", "can","created_at","updated_at","otp_verification_code","otp_expire_at"])])
+                        ->send();
+        }
+        /**
+        * @OA\Put(
+        * path="/api/v1/patients/{id}/update-phone-number",
+        * operationId="updatePhone",
+        * security={ {"sanctum": {} }},
+        * tags={"patients"},
+        * summary="update patient phone number",
+        * description="update patient phone_number ",
+        *      @OA\Parameter(
+        *         name="id",
+        *         in="path",
+        *         description="Patient id",
+        *         required=false,
+        *      ),
+        *     @OA\RequestBody(
+        *         @OA\JsonContent(),
+        *         @OA\MediaType(
+        *            mediaType="application/x-www-form-urlencoded",
+        *             @OA\Schema(
+        *                 @OA\Property( property="phone_number",type="string",example="+213648952765"),
+        *        )
+        *       )
+        *    ),
+        *    @OA\Response( response=200, description="Phone Updated Successfully", @OA\JsonContent() ),
+        *    @OA\Response( response=404,description="No Patient Found with the given phone number", @OA\JsonContent()),
+        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() )
+        *    )
+        */
+        public function updatePhone(Request $request,$id)
+        {
+            $request->validate([
+                'phone_number' => 'required|regex:/^(\+\d{1,2}\d{10})$/'
+            ]);
+            $patient = auth('sanctum') ? auth('sanctum')->user() : Patient::findOrFail($id);
+            $patient->update($request->only('phone_number'));
+
+            return $this->api->success()
+                        ->message('Phone number updated successfully')
+                        ->payload(['phone_number'=>$patient->phone_number])
+                        ->send();
+        }
+        /**
+        * @OA\Post(
+        * path="/api/v1/patients/{id}/update-thumbnail",
+        * operationId="updateThumbnail",
+        * security={ {"sanctum": {} }},
+        * tags={"patients"},
+        * summary="update patient thumbnail or profile photo",
+        * description="update patient thumbnail(profile photo)",
+        *      @OA\Parameter(
+        *         name="id",
+        *         in="path",
+        *         description="Patient id",
+        *         required=false,
+        *      ),
+        *     @OA\RequestBody(
+        *         @OA\JsonContent(),
+        *         @OA\MediaType(
+        *            mediaType="multipart/form-data",
+        *             @OA\Schema(
+        *                 @OA\Property( property="thumbnail",type="file"),
+        *        )
+        *       )
+        *    ),
+        *    @OA\Response( response=200, description="Thumbnail Updated Successfully", @OA\JsonContent() ),
+        *    @OA\Response( response=404,description="No Patient Found with the given phone number", @OA\JsonContent()),
+        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() )
+        *    )
+        */
+        public function updateThumbnail(Request $request,$id)
+        {
+            $request->validate([
+                'thumbnail' => ['required','mimes:jpg,jpeg,png', 'max:1024'],
+            ]);
+            $patient = auth('sanctum') ? auth('sanctum')->user() : Patient::findOrFail($id);
+            
+            tap($patient->thumbnail, function ($previous) use ($request,$patient) {
+                $patient->update([
+                    'thumbnail' => $request->thumbnail->storePublicly(
+                        'patients/thumbnails', ['disk' => 'public']
+                    ),
+                ]);
+    
+                if ($previous) {
+                    Storage::disk('public')->delete($previous);
+                }
+            });
+
+            return $this->api->success()
+                        ->message('Thumbnail updated successfully')
+                        ->payload(['thumbnail'=>$patient->thumbnail])
+                        ->send();
+        }
+          /**
+        * @OA\Delete(
+        * path="/api/v1/patients/{id}",
+        * operationId="deletePatientAccount",
+        * security={ {"sanctum": {} }},
+        * tags={"patients"},
+        * summary="delete patient account",
+        * description="delete patient account",
+        *      @OA\Parameter(
+        *         name="id",
+        *         in="path",
+        *         description="Patient id to delete",
+        *         required=false,
+        *      ),
+        *    @OA\Response( response=200, description="You account was deleted successfully", @OA\JsonContent() ),
+        *    @OA\Response( response=404,description="No Patient Found with the given phone number", @OA\JsonContent()),
+        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() )
+        *    )
+        */
+        public function deletePatientAccount(Request $request,$id){
+        
+            $patient = auth('sanctum') ? auth('sanctum')->user() : Patient::findOrFail($id);
+            $patient->tokens()->delete();
+            $patient->delete();
+
+            return $this->api->success()
+                        ->message('Your account was deleted successfully')
+                        ->send();
+
+        }
+          /**
+        * @OA\post(
+        * path="/api/v1/patients/{id}/logout",
+        * operationId="logout",
+        * security={ {"sanctum": {} }},
+        * tags={"patients"},
+        * description="Logout a patient",
+        *      @OA\Parameter(
+        *         name="id",
+        *         in="path",
+        *         description="Patient id to logout",
+        *         required=false,
+        *      ),
+        *    @OA\Response( response=200, description="You logged out successfully", @OA\JsonContent() ),
+        *    @OA\Response( response=404,description="No Patient Found with the given phone number", @OA\JsonContent()),
+        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() )
+        *    )
+        */
+        public function logout(Request $request,$id){
+        
+            $patient = auth('sanctum') ? auth('sanctum')->user() : Patient::findOrFail($id);
+            $patient->tokens()->delete();
+
+            return $this->api->success()
+                        ->message('You logged out successfully')
+                        ->send();
+
+
+        }
+          /**
+        * @OA\Put(
+        * path="/api/v1/patients/{id}/notifications-status/{status}",
+        * operationId="switchNotificationsStataus",
+        * security={ {"sanctum": {} }},
+        * tags={"patients"},
+        * description="change the notification status  on/off",
+        
+        *      @OA\Parameter(  name="id", in="path", description="Patient id to change notification state", required=false),
+        *      @OA\Parameter(  name="status", in="path", description="notification status on/off", required=true,
+        *        @OA\Schema(type="integer"),
+        *         @OA\Examples(example="status", value="0",summary="switch notification on/off"),
+        *        ),
+        *      @OA\Response( response=200, description="notifications state switched successfully", @OA\JsonContent() ),
+        *      @OA\Response( response=422,description="Please Provide a correct status format", @OA\JsonContent()),
+        *    )
+        */
+        public function switchNotificationsStataus(Request $request,$id,$state){
+            if(!in_array($state,[0,1])){
+                return $this->api->failed()->code(422)
+                            ->message('Please Provide a correct status format')
+                            ->send();
+            }
+            $patient = auth('sanctum') ? auth('sanctum')->user() : Patient::findOrFail($id);
+            $patient->update(['notification_status'=>(boolean)$state]);
+
+            return $this->api->success()
+                        ->message((int)$state == 0 ? 'notifications turned off successfully' : 'notifications turned On successfully')
+                        ->send();
+
+        }
+          /**
+        * @OA\Get(
+        * path="/api/v1/patients/{id}/scales",
+        * operationId="getPatientScales",
+        * security={ {"sanctum": {} }},
+        * tags={"patients"},
+        * description="get patient filled scales ",
+        
+        *      @OA\Parameter(  name="id", in="path", description="Patient id ", required=true),
+        *      @OA\Response( response=200, description="notifications state switched successfully", @OA\JsonContent() ),
+        *      @OA\Response( response=422,description="Please Provide a correct status format", @OA\JsonContent()),
+        *    )
+        */
+        public function getPatientScales($id){
+            
+            $patient = auth('sanctum') ? auth('sanctum')->user() : Patient::findOrFail($id);
+            
+            $scales = PatientScale::wherePatientId($patient->id)
+                                    ->with(['scale'=>function($q) {
+                                        $q->select(['id','title','title_ar','short_description','short_description_ar']);
+                                    }])
+                                    ->get()
+                                    ->makeHidden(["api_route", "can","created_at","updated_at"])
+                                    ->map(function($q){
+                                        return[
+                                            'scale_id'=> $q->scale->id,
+                                            'scale_title'=>$q->scale->title,
+                                            'scale_title_ar'=>$q->scale->title,
+                                            'scale_short_description'=>$q->scale->short_description,
+                                            'scale_short_description_ar'=>$q->scale->short_description_ar,
+                                            'choosed_answers'=> $q->scale_questions_answers
+                                        ];
+                                    });
+
+            return $this->api->success()
+                        ->message('patient scales fetched successfully')
+                        ->payload($scales)
+                        ->send();
+
         }
 }

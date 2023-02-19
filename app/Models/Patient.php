@@ -6,13 +6,16 @@ use DateTimeInterface;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Patient extends Model
 {
     use HasFactory;
     use HasApiTokens;
     use Notifiable;
+    use SoftDeletes;
 
     protected $fillable = [
         'full_name',
@@ -98,7 +101,17 @@ class Patient extends Model
     public function familyHistory() {
         return $this->belongsTo(\App\Models\FamilyHistory::class,"family_history_id","id");
     }
-    public function getOtherProblemsAttribute($value){
-        return json_decode($value,true);
-    }
+   
+    /**
+     * Get the user's first name.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function otherProblems(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value, true),
+            set: fn ($value) => json_encode(json_decode($value,true)),
+        );
+    } 
 }

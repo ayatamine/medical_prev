@@ -233,6 +233,291 @@
                 ]
             }
         },
+        "/api/v1/patients/{id}/update-phone-number": {
+            "put": {
+                "tags": [
+                    "patients"
+                ],
+                "summary": "update patient phone number",
+                "description": "update patient phone_number ",
+                "operationId": "updatePhone",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Patient id",
+                        "required": false
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "properties": {
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": "+213648952765"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Phone Updated Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No Patient Found with the given phone number",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/patients/{id}/update-thumbnail": {
+            "post": {
+                "tags": [
+                    "patients"
+                ],
+                "summary": "update patient thumbnail or profile photo",
+                "description": "update patient thumbnail(profile photo)",
+                "operationId": "updateThumbnail",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Patient id",
+                        "required": false
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "thumbnail": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Thumbnail Updated Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No Patient Found with the given phone number",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/patients/{id}": {
+            "delete": {
+                "tags": [
+                    "patients"
+                ],
+                "summary": "delete patient account",
+                "description": "delete patient account",
+                "operationId": "deletePatientAccount",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Patient id to delete",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "You account was deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No Patient Found with the given phone number",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/patients/{id}/logout": {
+            "post": {
+                "tags": [
+                    "patients"
+                ],
+                "description": "Logout a patient",
+                "operationId": "logout",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Patient id to logout",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "You logged out successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No Patient Found with the given phone number",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/patients/{id}/notifications-status/{status}": {
+            "put": {
+                "tags": [
+                    "patients"
+                ],
+                "description": "change the notification status  on/off",
+                "operationId": "switchNotificationsStataus",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Patient id to change notification state",
+                        "required": false
+                    },
+                    {
+                        "name": "status",
+                        "in": "path",
+                        "description": "notification status on/off",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "status": {
+                                "summary": "switch notification on/off",
+                                "value": "0"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "notifications state switched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Please Provide a correct status format",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/v1/chronic-diseases": {
             "get": {
                 "tags": [

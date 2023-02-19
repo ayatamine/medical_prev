@@ -12,7 +12,7 @@ class ChronicDiseasesController extends Controller
        /**
      * @OA\Get(
      *      path="/api/v1/chronic-diseases",
-     *      operationId="getChronicDiseases",
+     *      operationId="index",
      *      tags={"chronicDiseases"},
      *      description="Get list of chronic diseases",
      *      @OA\Response(
@@ -25,7 +25,7 @@ class ChronicDiseasesController extends Controller
     public function index()
     {
         $chronic_diseases = ChronicDisease::select('name')->latest()->get()->makeHidden(["api_route", "can"])->toArray();
-        $message = count($chronic_diseases) ? 'data fetched successfuly' : 'no chronic diseases recodrd founded';
+        $message = count($chronic_diseases) ? 'data fetched successfuly' : 'no chronic diseases record founded';
         return response()->json(
             [
             "message" => $message,

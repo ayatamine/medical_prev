@@ -72,5 +72,41 @@
         "isTitle": false,
         "isParent": false,
         "children": []
+    },
+    "scale-questions": {
+        "route": "admin.scale-questions.index",
+        "title": "Scale Questions",
+        "routePattern": "admin.scale-questions.*",
+        "faIcon": "far fa-clone",
+        "isTitle": false,
+        "isParent": false,
+        "children": []
+    },
+    "scale-answers": {
+        "route": "admin.scale-answers.index",
+        "title": "Scale Answers",
+        "routePattern": "admin.scale-answers.*",
+        "faIcon": "far fa-clone",
+        "isTitle": false,
+        "isParent": false,
+        "children": []
+    },
+    "patient-scales": {
+        "route": "admin.patient-scales.index",
+        "title": "Patient Scales",
+        "routePattern": "admin.patient-scales.*",
+        "faIcon": "far fa-clone",
+        "isTitle": false,
+        "isParent": false,
+        "children": []
+    },
+    "scales": {
+        "route": "admin.scales.index",
+        "title": "Scales",
+        "routePattern": "admin.scales.*",
+        "faIcon": "far fa-clone",
+        "isTitle": false,
+        "isParent": false,
+        "children": []
     }
 }

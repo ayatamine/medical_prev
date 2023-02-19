@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(SeedAdminRoleAndUser::class);
         // $this->call(GrantAllPermsToAdmin::class);
 
-        $this->call(AllergySeeder::class);
+        // $this->call(AllergySeeder::class);
+        $this->call(PatientScaleSeeder::class);
     }
 }

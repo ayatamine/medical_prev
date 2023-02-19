@@ -47,3 +47,27 @@ Route::group(["prefix" => "admin","as" => "admin.","middleware"=>['auth:sanctum'
 Route::group(["prefix" => "admin","as" => "admin.","middleware"=>['auth:sanctum', 'verified']], function () {
     Route::resource('allergies', \App\Http\Controllers\Admin\AllergyController::class)->parameters(["allergies" => "allergy"]);
 });
+
+
+/* Auto-generated scale-questions admin routes */
+Route::group(["prefix" => "admin","as" => "admin.","middleware"=>['auth:sanctum', 'verified']], function () {
+    Route::resource('scale-questions', \App\Http\Controllers\Admin\ScaleQuestionController::class)->parameters(["scale-questions" => "scaleQuestion"]);
+});
+
+
+/* Auto-generated scale-answers admin routes */
+Route::group(["prefix" => "admin","as" => "admin.","middleware"=>['auth:sanctum', 'verified']], function () {
+    Route::resource('scale-answers', \App\Http\Controllers\Admin\ScaleAnswerController::class)->parameters(["scale-answers" => "scaleAnswer"]);
+});
+
+
+/* Auto-generated patient-scales admin routes */
+Route::group(["prefix" => "admin","as" => "admin.","middleware"=>['auth:sanctum', 'verified']], function () {
+    Route::resource('patient-scales', \App\Http\Controllers\Admin\PatientScaleController::class)->parameters(["patient-scales" => "patientScale"]);
+});
+
+
+/* Auto-generated scales admin routes */
+Route::group(["prefix" => "admin","as" => "admin.","middleware"=>['auth:sanctum', 'verified']], function () {
+    Route::resource('scales', \App\Http\Controllers\Admin\ScaleController::class)->parameters(["scales" => "scale"]);
+});

@@ -7,7 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class FillPermissionsForPatientScales extends Migration
+class FillPermissionsForScaleQuestions extends Migration
 {
     /**
      * @var Repository|mixed
@@ -23,19 +23,19 @@ class FillPermissionsForPatientScales extends Migration
     protected $roles;
 
     /**
-     * FillPermissionsForPatientScales constructor.
+     * FillPermissionsForScaleQuestions constructor.
      */
     public function __construct()
     {
         $this->guardName = "web";
 
         $permissions = collect([
-            'Patient Scale Module' => 'patient-scales',
-            'List All Patient Scale' => 'patient-scales.index',
-            'Create New Patient Scale' => 'patient-scales.create',
-            'View Any Patient Scale' => 'patient-scales.show',
-            'Edit or Update a Single Patient Scale' => 'patient-scales.edit',
-            'Delete Patient Scale' => 'patient-scales.delete',
+            'Scale Questions Module' => 'scale-questions',
+            'List All Scale Questions' => 'scale-questions.index',
+            'Create New Scale Questions' => 'scale-questions.create',
+            'View Any Scale Question' => 'scale-questions.show',
+            'Edit or Update a Single Scale Question' => 'scale-questions.edit',
+            'Delete Scale Questions' => 'scale-questions.delete',
         ]);
 
         //Add New permissions
