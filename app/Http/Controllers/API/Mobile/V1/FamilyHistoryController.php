@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
         /**
       * @OA\Get(
       *      path="/api/v1/family-histories",
-      *      operationId="index",
+      *      operationId="family_history_index",
       *      tags={"familyHistories"},
       *      description="Get list of family histories",
       *      @OA\Response(

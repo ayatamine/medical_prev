@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\API\Mobile\V1\Auth;
 
 use App\Models\Patient;
+use App\Models\PatientScale;
 use Illuminate\Http\Request;
+use App\Models\Recommendation;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ScaleResource;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Api\PatientRequest;
-use App\Models\PatientScale;
+use App\Http\Resources\PatientScaleResource;
+use App\Http\Resources\RecommendationResource;
 use Savannabits\JetstreamInertiaGenerator\Helpers\ApiResponse;
 
 class PatientController extends Controller
@@ -136,7 +140,8 @@ class PatientController extends Controller
         *    ),
         *    @OA\Response( response=200, description="Patient Record Completed Successfuly", @OA\JsonContent() ),
         *    @OA\Response( response=404,description="Patient not found with the given token or phone number, please login again", @OA\JsonContent()),
-        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() )
+        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() ),
+          *      @OA\Response( response=401, description="unauthenticated", @OA\JsonContent() ),
         *    )
         */
         public function storePatientData(PatientRequest $request)
@@ -175,7 +180,8 @@ class PatientController extends Controller
         *    ),
         *    @OA\Response( response=200, description="Phone Updated Successfully", @OA\JsonContent() ),
         *    @OA\Response( response=404,description="No Patient Found with the given phone number", @OA\JsonContent()),
-        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() )
+        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() ),
+        *      @OA\Response( response=401, description="unauthenticated", @OA\JsonContent() ),
         *    )
         */
         public function updatePhone(Request $request,$id)
@@ -216,7 +222,9 @@ class PatientController extends Controller
         *    ),
         *    @OA\Response( response=200, description="Thumbnail Updated Successfully", @OA\JsonContent() ),
         *    @OA\Response( response=404,description="No Patient Found with the given phone number", @OA\JsonContent()),
-        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() )
+        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() ),
+        *      @OA\Response( response=401, description="unauthenticated", @OA\JsonContent() ),
+
         *    )
         */
         public function updateThumbnail(Request $request,$id)
@@ -259,7 +267,8 @@ class PatientController extends Controller
         *      ),
         *    @OA\Response( response=200, description="You account was deleted successfully", @OA\JsonContent() ),
         *    @OA\Response( response=404,description="No Patient Found with the given phone number", @OA\JsonContent()),
-        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() )
+        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() ),
+        *      @OA\Response( response=401, description="unauthenticated", @OA\JsonContent() ),
         *    )
         */
         public function deletePatientAccount(Request $request,$id){
@@ -288,7 +297,8 @@ class PatientController extends Controller
         *      ),
         *    @OA\Response( response=200, description="You logged out successfully", @OA\JsonContent() ),
         *    @OA\Response( response=404,description="No Patient Found with the given phone number", @OA\JsonContent()),
-        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() )
+        *    @OA\Response(response=500,description="internal server error", @OA\JsonContent() ),
+          *      @OA\Response( response=401, description="unauthenticated", @OA\JsonContent() ),
         *    )
         */
         public function logout(Request $request,$id){
@@ -342,8 +352,8 @@ class PatientController extends Controller
         * description="get patient filled scales ",
         
         *      @OA\Parameter(  name="id", in="path", description="Patient id ", required=true),
-        *      @OA\Response( response=200, description="notifications state switched successfully", @OA\JsonContent() ),
-        *      @OA\Response( response=422,description="Please Provide a correct status format", @OA\JsonContent()),
+        *      @OA\Response( response=200, description="scales fetched successfully", @OA\JsonContent() ),
+        *      @OA\Response( response=401, description="unauthenticated", @OA\JsonContent() ),
         *    )
         */
         public function getPatientScales($id){
@@ -357,14 +367,7 @@ class PatientController extends Controller
                                     ->get()
                                     ->makeHidden(["api_route", "can","created_at","updated_at"])
                                     ->map(function($q){
-                                        return[
-                                            'scale_id'=> $q->scale->id,
-                                            'scale_title'=>$q->scale->title,
-                                            'scale_title_ar'=>$q->scale->title,
-                                            'scale_short_description'=>$q->scale->short_description,
-                                            'scale_short_description_ar'=>$q->scale->short_description_ar,
-                                            'choosed_answers'=> $q->scale_questions_answers
-                                        ];
+                                        return new PatientScaleResource($q);
                                     });
 
             return $this->api->success()
@@ -372,5 +375,43 @@ class PatientController extends Controller
                         ->payload($scales)
                         ->send();
 
+        }
+           /**
+        * @OA\Get(
+        * path="/api/v1/patients/recommendations",
+        * operationId="recommendations",
+        * security={ {"sanctum": {} }},
+        * tags={"patients"},
+        * description="get patient recommendation based on his/her age and his/her gender",
+        *      @OA\Response( response=200, description="recommendations fetched successfully", @OA\JsonContent() ),
+        *      @OA\Response( response=401, description="unauthenticated", @OA\JsonContent() ),
+        *    )
+        */
+        public function recommendations(Request $request){
+            $patient = auth('sanctum') ? auth('sanctum')->user() : $request->user();
+            $recommendations = Recommendation::publishable()->byAgeAndSex($patient->gender, $patient->age ?? 18);
+            return $this->api->success()
+            ->message('recommendations fetched successfully')
+            ->payload(RecommendationResource::collection($recommendations->get()))
+            ->send();
+        }
+           /**
+        * @OA\Get(
+        * path="/api/v1/patients/recommendations/{id}",
+        * operationId="recommendationDetails",
+        * security={ {"sanctum": {} }},
+        * tags={"patients"},
+        * description="get recommendation details by id",
+        *      @OA\Parameter(  name="id", in="path", description="recommendation id ", required=true),
+        *      @OA\Response( response=200, description="recommendation fetched successfully", @OA\JsonContent() ),
+        *      @OA\Response( response=404, description="404 not found", @OA\JsonContent() ),
+        *    )
+        */
+        public function recommendationDetails($id){
+            $recommendation = Recommendation::findOrFail($id);
+            return $this->api->success()
+            ->message('recommendation fetched successfully')
+            ->payload(new RecommendationResource($recommendation))
+            ->send();
         }
 }

@@ -12,7 +12,7 @@ class ChronicDiseasesController extends Controller
        /**
      * @OA\Get(
      *      path="/api/v1/chronic-diseases",
-     *      operationId="index",
+     *      operationId="chronicDiseasesindex",
      *      tags={"chronicDiseases"},
      *      description="Get list of chronic diseases",
      *      @OA\Response(

@@ -8,6 +8,25 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/v1/ads": {
+            "get": {
+                "tags": [
+                    "ads"
+                ],
+                "description": "Get list of ads",
+                "operationId": "ads_index",
+                "responses": {
+                    "200": {
+                        "description": "ads fetched successfuly",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/patients/otp/send": {
             "post": {
                 "tags": [
@@ -224,6 +243,14 @@
                                 "schema": {}
                             }
                         }
+                    },
+                    "401": {
+                        "description": "unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -286,6 +313,14 @@
                     },
                     "500": {
                         "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthenticated",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -357,6 +392,14 @@
                                 "schema": {}
                             }
                         }
+                    },
+                    "401": {
+                        "description": "unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -406,6 +449,14 @@
                                 "schema": {}
                             }
                         }
+                    },
+                    "401": {
+                        "description": "unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -449,6 +500,14 @@
                     },
                     "500": {
                         "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthenticated",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -518,13 +577,117 @@
                 ]
             }
         },
+        "/api/v1/patients/{id}/scales": {
+            "get": {
+                "tags": [
+                    "patients"
+                ],
+                "description": "get patient filled scales ",
+                "operationId": "getPatientScales",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Patient id ",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "scales fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/patients/recommendations": {
+            "get": {
+                "tags": [
+                    "patients"
+                ],
+                "description": "get patient recommendation based on his/her age and his/her gender",
+                "operationId": "recommendations",
+                "responses": {
+                    "200": {
+                        "description": "recommendations fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/patients/recommendations/{id}": {
+            "get": {
+                "tags": [
+                    "patients"
+                ],
+                "description": "get recommendation details by id",
+                "operationId": "recommendationDetails",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "recommendation id ",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "recommendation fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/v1/chronic-diseases": {
             "get": {
                 "tags": [
                     "chronicDiseases"
                 ],
                 "description": "Get list of chronic diseases",
-                "operationId": "getChronicDiseases",
+                "operationId": "chronicDiseasesindex",
                 "responses": {
                     "200": {
                         "description": "data fetched successfuly",
@@ -570,7 +733,26 @@
                     "familyHistories"
                 ],
                 "description": "Get list of family histories",
-                "operationId": "getfamilyHistories",
+                "operationId": "family_history_index",
+                "responses": {
+                    "200": {
+                        "description": "data fetched successfuly",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/scales": {
+            "get": {
+                "tags": [
+                    "scales"
+                ],
+                "description": "Get list of patient scales",
+                "operationId": "index",
                 "responses": {
                     "200": {
                         "description": "data fetched successfuly",

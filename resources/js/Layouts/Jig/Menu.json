@@ -108,5 +108,23 @@
         "isTitle": false,
         "isParent": false,
         "children": []
+    },
+    "ads": {
+        "route": "admin.ads.index",
+        "title": "Ads",
+        "routePattern": "admin.ads.*",
+        "faIcon": "far fa-clone",
+        "isTitle": false,
+        "isParent": false,
+        "children": []
+    },
+    "recommendations": {
+        "route": "admin.recommendations.index",
+        "title": "Recommendations",
+        "routePattern": "admin.recommendations.*",
+        "faIcon": "far fa-clone",
+        "isTitle": false,
+        "isParent": false,
+        "children": []
     }
 }

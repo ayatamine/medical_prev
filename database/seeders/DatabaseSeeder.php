@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Recommendation;
 use Illuminate\Database\Seeder;
 use Database\Seeders\AllergySeeder;
 
@@ -19,6 +20,10 @@ class DatabaseSeeder extends Seeder
         // $this->call(GrantAllPermsToAdmin::class);
 
         // $this->call(AllergySeeder::class);
-        $this->call(PatientScaleSeeder::class);
+        // $this->call(PatientScaleSeeder::class);
+        // $this->call(AdsSeeder::class);
+        if(!Recommendation::count()){
+            $this->call(RecommendationSeeder::class);
+        }
     }
 }

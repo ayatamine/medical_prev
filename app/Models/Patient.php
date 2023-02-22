@@ -5,10 +5,11 @@ namespace App\Models;
 use DateTimeInterface;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Patient extends Model
 {
@@ -114,4 +115,7 @@ class Patient extends Model
             set: fn ($value) => json_encode(json_decode($value,true)),
         );
     } 
+    public function getThumbnailAttribute($value){
+        return Storage::disk('public')->url($value);
+    }
 }

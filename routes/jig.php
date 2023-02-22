@@ -71,3 +71,15 @@ Route::group(["prefix" => "admin","as" => "admin.","middleware"=>['auth:sanctum'
 Route::group(["prefix" => "admin","as" => "admin.","middleware"=>['auth:sanctum', 'verified']], function () {
     Route::resource('scales', \App\Http\Controllers\Admin\ScaleController::class)->parameters(["scales" => "scale"]);
 });
+
+
+/* Auto-generated ads admin routes */
+Route::group(["prefix" => "admin","as" => "admin.","middleware"=>['auth:sanctum', 'verified']], function () {
+    Route::resource('ads', \App\Http\Controllers\Admin\AdController::class)->parameters(["ads" => "ad"]);
+});
+
+
+/* Auto-generated recommendations admin routes */
+Route::group(["prefix" => "admin","as" => "admin.","middleware"=>['auth:sanctum', 'verified']], function () {
+    Route::resource('recommendations', \App\Http\Controllers\Admin\RecommendationController::class)->parameters(["recommendations" => "recommendation"]);
+});

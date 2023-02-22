@@ -84,11 +84,7 @@ Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], functi
 });
 
 
-/* Auto-generated scale-answers api routes */
-Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], function () {
-    Route::get('/scale-answers/dt', [\App\Http\Controllers\API\ScaleAnswerController::class,'dt'])->name('scale-answers.dt');
-    Route::apiResource('/scale-answers', \App\Http\Controllers\API\ScaleAnswerController::class)->parameters(["scale-answers" => "scaleAnswer"]);
-});
+
 
 
 /* Auto-generated patient-scales api routes */
@@ -102,4 +98,18 @@ Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], functi
 Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], function () {
     Route::get('/scales/dt', [\App\Http\Controllers\API\ScaleController::class,'dt'])->name('scales.dt');
     Route::apiResource('/scales', \App\Http\Controllers\API\ScaleController::class)->parameters(["scales" => "scale"]);
+});
+
+
+/* Auto-generated ads api routes */
+Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], function () {
+    Route::get('/ads/dt', [\App\Http\Controllers\API\AdController::class,'dt'])->name('ads.dt');
+    Route::apiResource('/ads', \App\Http\Controllers\API\AdController::class)->parameters(["ads" => "ad"]);
+});
+
+
+/* Auto-generated recommendations api routes */
+Route::group(["middleware"=>['auth:sanctum', 'verified'],'as' => 'api.'], function () {
+    Route::get('/recommendations/dt', [\App\Http\Controllers\API\RecommendationController::class,'dt'])->name('recommendations.dt');
+    Route::apiResource('/recommendations', \App\Http\Controllers\API\RecommendationController::class)->parameters(["recommendations" => "recommendation"]);
 });
